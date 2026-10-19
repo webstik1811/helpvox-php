@@ -19,7 +19,7 @@ use HelpVox\Exception\ApiException;
  */
 final class Client
 {
-    public const VERSION = '0.1.0';
+    public const VERSION = '0.2.0';
     public const DEFAULT_BASE_URL = 'https://www.helpvox.ai';
 
     private readonly string $baseUrl;

@@ -250,6 +250,47 @@ final class Client
         return $this->request('DELETE', '/api/v1/discounts/' . rawurlencode($id));
     }
 
+    // ─── Shipping price (orders:write) ──────────────────────────────────────
+
+    /**
+     * `POST /api/v1/shipping-quotes` — sets the shipping price (and optionally the
+     * courier) for the order the agent is about to place in a conversation. A new
+     * quote replaces the previous one.
+     *
+     *     $hv->createShippingQuote([
+     *         'conversation_id' => $ctx->conversationId,
+     *         'amount' => 5.90,
+     *         'currency' => 'EUR',
+     *         'label' => 'Speedy to an office',
+     *         'courier' => 'speedy',
+     *         'courier_service' => 'office',
+     *     ]);
+     *
+     * @param array<string,mixed> $quote
+     *
+     * @return array<string,mixed> `{ id, status: "pending", expires_at }`
+     */
+    public function createShippingQuote(array $quote): array
+    {
+        return $this->request('POST', '/api/v1/shipping-quotes', $quote);
+    }
+
+    /** @return array<string,mixed> */
+    public function shippingQuote(string $id): array
+    {
+        return $this->request('GET', '/api/v1/shipping-quotes/' . rawurlencode($id));
+    }
+
+    /**
+     * Cancels a pending shipping quote; the order then uses the market's price.
+     *
+     * @return array<string,mixed>
+     */
+    public function cancelShippingQuote(string $id): array
+    {
+        return $this->request('DELETE', '/api/v1/shipping-quotes/' . rawurlencode($id));
+    }
+
     // ─── Helpers ────────────────────────────────────────────────────────────
 
     private static function normalizePath(string $path): string

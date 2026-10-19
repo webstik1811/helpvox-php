@@ -250,6 +250,119 @@ final class Client
         return $this->request('DELETE', '/api/v1/discounts/' . rawurlencode($id));
     }
 
+    // ─── Extra fees and payment method (orders:write) ───────────────────────
+
+    /**
+     * `POST /api/v1/fees` — an extra fee (gift wrapping, insurance) on the order the
+     * agent is about to place in a conversation.
+     *
+     * @param array<string,mixed> $fee
+     *
+     * @return array<string,mixed>
+     */
+    public function createFee(array $fee): array
+    {
+        return $this->request('POST', '/api/v1/fees', $fee);
+    }
+
+    /** @return array<string,mixed> */
+    public function fee(string $id): array
+    {
+        return $this->request('GET', '/api/v1/fees/' . rawurlencode($id));
+    }
+
+    /** @return array<string,mixed> */
+    public function cancelFee(string $id): array
+    {
+        return $this->request('DELETE', '/api/v1/fees/' . rawurlencode($id));
+    }
+
+    /**
+     * `POST /api/v1/payment-requests` — card, bank transfer or online payment instead
+     * of cash on delivery for the order the agent is about to place.
+     *
+     *     $hv->createPaymentRequest([
+     *         'conversation_id' => $ctx->conversationId,
+     *         'method' => 'card',
+     *         'label' => 'Card payment by link',
+     *     ]);
+     *
+     * @param array<string,mixed> $request
+     *
+     * @return array<string,mixed>
+     */
+    public function createPaymentRequest(array $request): array
+    {
+        return $this->request('POST', '/api/v1/payment-requests', $request);
+    }
+
+    /** @return array<string,mixed> */
+    public function paymentRequest(string $id): array
+    {
+        return $this->request('GET', '/api/v1/payment-requests/' . rawurlencode($id));
+    }
+
+    /** @return array<string,mixed> */
+    public function cancelPaymentRequest(string $id): array
+    {
+        return $this->request('DELETE', '/api/v1/payment-requests/' . rawurlencode($id));
+    }
+
+    // ─── Knowledge and busy times ───────────────────────────────────────────
+
+    /**
+     * Adds knowledge entries owned by your app; they go when it is uninstalled.
+     *
+     * @param list<array{question:string,answer:string}> $items
+     *
+     * @return array<string,mixed>
+     */
+    public function addKnowledge(array $items): array
+    {
+        return $this->request('POST', '/api/v1/knowledge', ['items' => $items]);
+    }
+
+    /**
+     * Replaces only your app's own entries.
+     *
+     * @param list<array{question:string,answer:string}> $items
+     *
+     * @return array<string,mixed>
+     */
+    public function replaceKnowledge(array $items): array
+    {
+        return $this->request('PUT', '/api/v1/knowledge', ['items' => $items]);
+    }
+
+    /** @return array<string,mixed> */
+    public function deleteKnowledge(string $id): array
+    {
+        return $this->request('DELETE', '/api/v1/knowledge/' . rawurlencode($id));
+    }
+
+    /**
+     * `PUT /api/v1/busy-times` (availability:write) — inside from–to your busy times
+     * become exactly `slots`; the agent does not book into them.
+     *
+     * @param array<string,mixed> $busy `{ from, to, resource_id?, slots: [{starts_at, ends_at, reason?}] }`
+     *
+     * @return array<string,mixed>
+     */
+    public function setBusyTimes(array $busy): array
+    {
+        return $this->request('PUT', '/api/v1/busy-times', $busy);
+    }
+
+    /**
+     * @param array<string,scalar> $query `from`, `to`
+     *
+     * @return array<string,mixed>
+     */
+    public function busyTimes(array $query = []): array
+    {
+        return $this->request('GET', '/api/v1/busy-times', null, $query);
+    }
+
     // ─── Shipping price (orders:write) ──────────────────────────────────────
 
     /**
